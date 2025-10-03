@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Form Kelompok</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .form-container {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(12px);
+      padding: 30px 35px;
+      border-radius: 20px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+      text-align: center;
+      width: 320px;
+      animation: fadeIn 0.7s ease;
+    }
+    .form-container h3 {
+      color: #fff;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      margin-top: 8px;
+      margin-bottom: 18px;
+      font-size: 15px;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    input[type="text"]:focus {
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #00c853;
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #009d42;
+    }
+    #message {
+      margin-top: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      min-height: 20px;
+    }
+    .success {
+      color: #00e676;
+    }
+    .error {
+      color: #ff1744;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h3>Masukkan Nama Anda</h3>
+    <input type="text" id="nama" placeholder="Nama lengkap..." autocomplete="off" />
+    <button id="submitBtn">Kirim</button>
+    <div id="message"></div>
+  </div>
+
+  <script>
+    const scriptURL = "https://script.google.com/macros/s/AKfycbwjjSmx79BOLFMHvJrgzTgz2ztDZoEQ1VMBQUs9L_oGiG9IzEohAUfYaTDP0HZcvgbCWA/exec";
+    const namaInput = document.getElementById('nama');
+    const btn = document.getElementById('submitBtn');
+    const message = document.getElementById('message');
+
+    btn.addEventListener('click', () => {
+      const nama = namaInput.value.trim();
+      if (!nama) {
+        message.innerHTML = "<span class='error'>⚠️ Nama tidak boleh kosong</span>";
+        return;
+      }
+
+      // Tampilkan pesan sukses langsung (tanpa nunggu fetch)
+      message.innerHTML = "<span class='success'>✅ Terkirim!</span>";
+      namaInput.value = "";
+
+      // Kirim ke Google Sheet di background
+      fetch(scriptURL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nama }),
+      }).catch(() => {
+        // Kalau ada error kirim
+        message.innerHTML = "<span class='error'>❌ Gagal mengirim ke server</span>";
+      });
+    });
+
+    // Tekan Enter = submit juga
+    namaInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') btn.click();
+    });
+  </script>
+</body>
+</html>
